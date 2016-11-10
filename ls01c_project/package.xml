@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>ls01c_project</name>
+  <version>0.0.1</version>
+  <description>Metapackage for SawYer ls01c software</description>
+  <maintainer email="wzhang@softrobtech.com">Carl</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>ls01c</run_depend>
+  <run_depend>ls01c_ftdi</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
