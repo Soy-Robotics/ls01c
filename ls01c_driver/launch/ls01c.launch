@@ -1,0 +1,6 @@
+<launch>
+  <arg name="laserPort_"  default="(env LS01C_SERIAL_PORT)"/>
+  <node pkg="ls01c" type="LS01C_node" name="LS01C_node">
+    <param name="laserPort_" value="$(arg laserPort_)"/> 
+  </node>
+</launch>
