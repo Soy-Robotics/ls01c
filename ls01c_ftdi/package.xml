@@ -1,0 +1,27 @@
+<package>
+  <name>ls01c_ftdi</name>
+  <version>0.7.1</version>
+  <description>
+	    Utilities for flashing and enabling ls01c's USB connection.
+	    This package contains tools for flashing the ls01c's FTDI chip (usually done at the factory).
+	    The special firmware for the FTDI chip (USB to serial converter) enables it to appear as 
+	    /dev/ls01c on the user's PC. 
+  </description>
+  <author email="yhju@yujinrobot.com">Younghun Ju</author>
+  <maintainer email="yhju@yujinrobot.com">Younghun Ju</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>ecl_command_line</build_depend>
+
+  <build_depend>libusb-dev</build_depend>
+  <build_depend>libftdi-dev</build_depend>
+  <build_depend>ftdi-eeprom</build_depend>
+
+  <run_depend>ecl_command_line</run_depend>
+
+  <run_depend>libusb-dev</run_depend>
+  <run_depend>libftdi-dev</run_depend>
+  <run_depend>ftdi-eeprom</run_depend>
+</package>

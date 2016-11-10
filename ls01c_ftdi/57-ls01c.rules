@@ -1,0 +1,5 @@
+# On precise, for some reason, USER and GROUP are getting ignored.
+# So setting mode = 0777 for now.
+#KERNEL=="ttyUSB*", KERNELS=="3-1.6.3.3.2:1.0",MODE:="0777", SYMLINK+="ls01c"
+KERNEL=="ttyUSB*", KERNELS=="2-1.1:1.0", MODE:="0777", SYMLINK+="ls01c"
+

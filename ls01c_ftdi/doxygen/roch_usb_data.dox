@@ -1,0 +1,253 @@
+/**
+@page lsusbdataGuide Usb Data
+
+@section ourChip Our Chip
+
+Important notes about our chip.
+
+- Part name: <a href="http://www.ftdichip.com/Products/ICs/FT232R.htm">FTDI FT232R</a>
+- It is chip type TYPE_R (refer to iInterface = FT232R on lsusb output) 
+- It is not self powered, bus powered
+- Requires 90mA of power
+
+@section lsusb_output Results from lsusb
+
+@verbatim
+$ sudo lsusb
+Bus 002 Device 002: ID 0bda:5411 Realtek Semiconductor Corp. 
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:07dc Intel Corp. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+...
+Bus 002 Device 005: ID 10c4:ea60 Cygnal Integrated Products, Inc. CP210x UART Bridge / myAVR mySmartUSB light
+
+$ sudo lsusb -v -s 002:005
+@endverbatim
+
+- Vendor Id: 0x10c4
+- Product Id: 0xea60
+- Self Powered: 0
+- Remote Wakeup: 1
+- Use Serial: 3 
+- In Iso: 0
+- Out Iso: 0
+- Suspend: 0
+- Max Power: 100mA
+
+And from `sudo lsusb -v -s 002:005`
+
+@verbatim
+$ sudo lsusb -v -s 004:006
+
+Bus 002 Device 005: ID 10c4:ea60 Cygnal Integrated Products, Inc. CP210x UART Bridge / myAVR mySmartUSB light
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               1.10
+  bDeviceClass            0 (Defined at Interface level)
+  bDeviceSubClass         0 
+  bDeviceProtocol         0 
+  bMaxPacketSize0        64
+  idVendor           0x10c4 Cygnal Integrated Products, Inc.
+  idProduct          0xea60 CP210x UART Bridge / myAVR mySmartUSB light
+  bcdDevice            1.00
+  iManufacturer           1 
+  iProduct                2 
+  iSerial                 3 
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           32
+    bNumInterfaces          1
+    bConfigurationValue     1
+    iConfiguration          0 
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              100mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      0 
+      bInterfaceProtocol      0 
+      iInterface              2 
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0040  1x 64 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x01  EP 1 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0040  1x 64 bytes
+        bInterval               0
+
+Device Status:     0x80
+  (Bus Powered)
+@endverbatim
+
+@section udevadm_output Results from udevadm
+
+
+@verbatim
+$ sudo udevadm info -a -n /dev/ttyUSB0
+
+Udevadm info starts with the device specified by the devpath and then
+walks up the chain of parent devices. It prints for every device
+found, all possible attributes in the udev rules key format.
+A rule to match, can be composed by the attributes of the device
+and the attributes from one single parent device.
+
+  looking at device '/devices/platform/tegra-ehci.2/usb2/2-1/2-1.1/2-1.1:1.0/ttyUSB0/tty/ttyUSB0':
+    KERNEL=="ttyUSB0"
+    SUBSYSTEM=="tty"
+    DRIVER==""
+
+  looking at parent device '/devices/platform/tegra-ehci.2/usb2/2-1/2-1.1/2-1.1:1.0/ttyUSB0':
+    KERNELS=="ttyUSB0"
+    SUBSYSTEMS=="usb-serial"
+    DRIVERS=="cp210x"
+    ATTRS{port_number}=="0"
+
+  looking at parent device '/devices/platform/tegra-ehci.2/usb2/2-1/2-1.1/2-1.1:1.0':
+    KERNELS=="2-1.1:1.0"
+    SUBSYSTEMS=="usb"
+    DRIVERS=="cp210x"
+    ATTRS{bInterfaceClass}=="ff"
+    ATTRS{bInterfaceSubClass}=="00"
+    ATTRS{bInterfaceProtocol}=="00"
+    ATTRS{bNumEndpoints}=="02"
+    ATTRS{supports_autosuspend}=="1"
+    ATTRS{bAlternateSetting}==" 0"
+    ATTRS{bInterfaceNumber}=="00"
+    ATTRS{interface}=="CP2102 USB to UART Bridge Controller"
+
+  looking at parent device '/devices/platform/tegra-ehci.2/usb2/2-1/2-1.1':
+    KERNELS=="2-1.1"
+    SUBSYSTEMS=="usb"
+    DRIVERS=="usb"
+    ATTRS{bDeviceSubClass}=="00"
+    ATTRS{bDeviceProtocol}=="00"
+    ATTRS{devpath}=="1.1"
+    ATTRS{idVendor}=="10c4"
+    ATTRS{speed}=="12"
+    ATTRS{bNumInterfaces}==" 1"
+    ATTRS{bConfigurationValue}=="1"
+    ATTRS{bMaxPacketSize0}=="64"
+    ATTRS{busnum}=="2"
+    ATTRS{devnum}=="5"
+    ATTRS{configuration}==""
+    ATTRS{bMaxPower}=="100mA"
+    ATTRS{authorized}=="1"
+    ATTRS{bmAttributes}=="80"
+    ATTRS{bNumConfigurations}=="1"
+    ATTRS{maxchild}=="0"
+    ATTRS{bcdDevice}=="0100"
+    ATTRS{avoid_reset_quirk}=="0"
+    ATTRS{quirks}=="0x0"
+    ATTRS{serial}=="0001"
+    ATTRS{version}==" 1.10"
+    ATTRS{urbnum}=="17"
+    ATTRS{ltm_capable}=="no"
+    ATTRS{manufacturer}=="Silicon Labs"
+    ATTRS{removable}=="unknown"
+    ATTRS{idProduct}=="ea60"
+    ATTRS{bDeviceClass}=="00"
+    ATTRS{product}=="CP2102 USB to UART Bridge Controller"
+
+  looking at parent device '/devices/platform/tegra-ehci.2/usb2/2-1':
+    KERNELS=="2-1"
+    SUBSYSTEMS=="usb"
+    DRIVERS=="usb"
+    ATTRS{bDeviceSubClass}=="00"
+    ATTRS{bDeviceProtocol}=="02"
+    ATTRS{devpath}=="1"
+    ATTRS{idVendor}=="0bda"
+    ATTRS{speed}=="480"
+    ATTRS{bNumInterfaces}==" 1"
+    ATTRS{bConfigurationValue}=="1"
+    ATTRS{bMaxPacketSize0}=="64"
+    ATTRS{busnum}=="2"
+    ATTRS{devnum}=="2"
+    ATTRS{configuration}==""
+    ATTRS{bMaxPower}=="0mA"
+    ATTRS{authorized}=="1"
+    ATTRS{bmAttributes}=="e0"
+    ATTRS{bNumConfigurations}=="1"
+    ATTRS{maxchild}=="4"
+    ATTRS{bcdDevice}=="0104"
+    ATTRS{avoid_reset_quirk}=="0"
+    ATTRS{quirks}=="0x0"
+    ATTRS{version}==" 2.00"
+    ATTRS{urbnum}=="74"
+    ATTRS{ltm_capable}=="no"
+    ATTRS{manufacturer}=="Generic"
+    ATTRS{removable}=="unknown"
+    ATTRS{idProduct}=="5411"
+    ATTRS{bDeviceClass}=="09"
+    ATTRS{product}=="4-Port USB 2.0 Hub"
+
+  looking at parent device '/devices/platform/tegra-ehci.2/usb2':
+    KERNELS=="usb2"
+    SUBSYSTEMS=="usb"
+    DRIVERS=="usb"
+    ATTRS{bDeviceSubClass}=="00"
+    ATTRS{bDeviceProtocol}=="01"
+    ATTRS{devpath}=="0"
+    ATTRS{idVendor}=="1d6b"
+    ATTRS{speed}=="480"
+    ATTRS{bNumInterfaces}==" 1"
+    ATTRS{bConfigurationValue}=="1"
+    ATTRS{bMaxPacketSize0}=="64"
+    ATTRS{authorized_default}=="1"
+    ATTRS{busnum}=="2"
+    ATTRS{devnum}=="1"
+    ATTRS{configuration}==""
+    ATTRS{bMaxPower}=="0mA"
+    ATTRS{authorized}=="1"
+    ATTRS{bmAttributes}=="e0"
+    ATTRS{bNumConfigurations}=="1"
+    ATTRS{maxchild}=="1"
+    ATTRS{bcdDevice}=="0310"
+    ATTRS{avoid_reset_quirk}=="0"
+    ATTRS{quirks}=="0x0"
+    ATTRS{serial}=="tegra-ehci.2"
+    ATTRS{version}==" 2.00"
+    ATTRS{urbnum}=="19"
+    ATTRS{ltm_capable}=="no"
+    ATTRS{manufacturer}=="Linux 3.10.40-grinch-21.3.4 ehci_hcd"
+    ATTRS{removable}=="unknown"
+    ATTRS{idProduct}=="0002"
+    ATTRS{bDeviceClass}=="09"
+    ATTRS{product}=="Tegra EHCI Host Controller"
+
+  looking at parent device '/devices/platform/tegra-ehci.2':
+    KERNELS=="tegra-ehci.2"
+    SUBSYSTEMS=="platform"
+    DRIVERS=="tegra-ehci"
+    ATTRS{boost_enable}=="Y"
+    ATTRS{uframe_periodic_max}=="-1060791588"
+
+  looking at parent device '/devices/platform':
+    KERNELS=="platform"
+    SUBSYSTEMS==""
+    DRIVERS==""
+
+
+@endverbatim
+
+**/
