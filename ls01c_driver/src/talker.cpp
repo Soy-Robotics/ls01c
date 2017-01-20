@@ -18,13 +18,15 @@ void publish_scan(ros::Publisher *pub, double *dist, int count, ros::Time start,
 	scan_msg.header.frame_id = "base_laser";
 	scan_count++;
 
-	scan_msg.angle_min = -3.1415926;
-	scan_msg.angle_max = 3.1415926;
+	scan_msg.angle_min = 0;
+	scan_msg.angle_max = 3.1415926*2;
 	scan_msg.angle_increment = (scan_msg.angle_max - scan_msg.angle_min) / (double)(count - 1);
+	ROS_INFO("count = %d",count);
+	ROS_INFO("%f",scan_msg.angle_increment * 180 / 3.1416);
 	scan_msg.scan_time = scan_time;
 	scan_msg.time_increment = scan_time / (double)(count - 1);
 	
-	scan_msg.range_min = 0.325;//defalut 0.15, 0.325 for roch
+	scan_msg.range_min = 0.15;//defalut 0.15, 0.325 for roch
 	scan_msg.range_max = 6.0;
 
 	scan_msg.intensities.resize(count);
@@ -49,6 +51,7 @@ void startStopCB(const std_msgs::Int32ConstPtr msg)
 	pthread_mutex_unlock(&mutex);
 }
 std::string port_;
+float rate_;
 int main(int argv, char **argc)
 {
 	ros::init(argv, argc, "LS01C_node");
@@ -56,8 +59,8 @@ int main(int argv, char **argc)
      
 	ros::Publisher scan_pub = n.advertise<sensor_msgs::LaserScan>("scan", 1000);
 	ros::Subscriber stop_sub = n.subscribe<std_msgs::Int32>("startOrStop", 10, startStopCB);
-	if(!n.getParam("laserPort_", port_))
-   	   port_ = "/dev/ttyUSB1";
+	if(!n.getParam("laserPort_", port_))   	   port_ = "/dev/ttyUSB1";
+    if(!n.getParam("rate",rate_))		rate_=10.0;
 	io_driver driver;
   	int ret = driver.OpenSerial(B230400,port_);
         driver.StartScan();
@@ -68,7 +71,7 @@ int main(int argv, char **argc)
 	double data[360 * 2];
 	double speed;
 	int count = 0;
-		
+	ros::Rate freq(rate_);	
 	ros::Time starts = ros::Time::now();
 	ros::Time ends = ros::Time::now();
 	ROS_INFO("talker....");
@@ -106,6 +109,7 @@ int main(int argv, char **argc)
 		float scan_duration = (ends - starts).toSec() * 1e-3;
 		publish_scan(&scan_pub, data, 360, starts, scan_duration);
 		starts = ends;
+		freq.sleep();
 	}
         driver.StopScan();
         driver.CloseSerial();

@@ -28,7 +28,7 @@
 #include <sys/time.h>
 
 
-#define PACKSIZE 1807
+#define PACKSIZE 1811
 #define PACKLEN (PACKSIZE/5-1)
 
 #define LSLIDAR_CMD_BYTE               0xa5
